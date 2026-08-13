@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Relatório HJ — Formulário Rápido</title>
+<style>
+  :root {
+    --azul: #1a73e8; --azul-escuro: #1557b0; --verde: #188038; --cinza: #5f6368;
+    --borda: #dadce0; --fundo: #f8f9fa; --card: #ffffff;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', Roboto, Arial, sans-serif; background: var(--fundo); color: #202124; }
+  header { background: var(--azul); color: #fff; padding: 18px 20px; }
+  header h1 { font-size: 20px; font-weight: 600; }
+  header p { font-size: 13px; opacity: .9; margin-top: 4px; }
+  main { max-width: 760px; margin: 20px auto; padding: 0 16px; }
+  .card { background: var(--card); border: 1px solid var(--borda); border-radius: 10px; padding: 20px; margin-bottom: 16px; }
+  .card h2 { font-size: 15px; color: var(--cinza); font-weight: 600; margin-bottom: 12px; text-transform: uppercase; letter-spacing: .5px; }
+  .campo { margin-bottom: 18px; }
+  .campo label { display: block; font-weight: 600; font-size: 14px; margin-bottom: 6px; }
+  .campo .desc { font-size: 12px; color: var(--cinza); margin-bottom: 6px; white-space: pre-line; }
+  .campo input[type=text], .campo input[type=time], .campo select, .campo textarea {
+    width: 100%; padding: 10px 12px; border: 1px solid var(--borda); border-radius: 8px;
+    font-size: 14px; background: #fff; font-family: inherit;
+  }
+  .campo textarea { min-height: 70px; resize: vertical; }
+  .campo input:focus, .campo select:focus, .campo textarea:focus { outline: 2px solid var(--azul); outline-offset: -1px; }
+  .radios { display: flex; flex-direction: column; gap: 8px; }
+  .radio-item { display: flex; align-items: center; gap: 10px; padding: 12px; border: 1px solid var(--borda); border-radius: 8px; cursor: pointer; font-size: 14px; }
+  .radio-item:hover { background: #f1f6fe; }
+  .radio-item input { accent-color: var(--azul); width: 18px; height: 18px; }
+  .modo-botoes { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 8px; }
+  .modo-btn { padding: 16px 12px; border: 2px solid var(--borda); border-radius: 10px; background: #fff;
+    font-size: 14px; font-weight: 600; cursor: pointer; text-align: center; transition: all .15s; }
+  .modo-btn.ativo { border-color: var(--azul); background: #e8f0fe; color: var(--azul-escuro); }
+  .modo-btn:hover { border-color: var(--azul); }
+  .secao-titulo { font-size: 16px; font-weight: 700; color: var(--azul-escuro); border-left: 4px solid var(--azul);
+    padding: 6px 12px; background: #e8f0fe; border-radius: 4px; margin: 4px 0 16px; }
+  .aviso-upload { background: #fef7e0; border: 1px solid #f9ab00; border-radius: 8px; padding: 12px; font-size: 13px; }
+  .aviso-upload a { color: var(--azul); }
+  .acoes { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 4px; }
+  .btn { padding: 11px 18px; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; font-family: inherit; }
+  .btn-primario { background: var(--azul); color: #fff; }
+  .btn-primario:hover { background: var(--azul-escuro); }
+  .btn-secundario { background: #fff; color: var(--azul); border: 1px solid var(--borda); }
+  .btn-secundario:hover { border-color: var(--azul); }
+  .btn-perigo { background: #fff; color: #d93025; border: 1px solid var(--borda); }
+  .btn-pequeno { padding: 6px 10px; font-size: 12px; }
+  .status { margin-top: 14px; padding: 12px; border-radius: 8px; font-size: 14px; display: none; }
+  .status.ok { display: block; background: #e6f4ea; color: var(--verde); border: 1px solid #34a853; }
+  .status.erro { display: block; background: #fce8e6; color: #d93025; border: 1px solid #ea4335; }
+  .status.info { display: block; background: #e8f0fe; color: var(--azul-escuro); border: 1px solid var(--azul); }
+  .reg { border: 1px solid var(--borda); border-radius: 8px; padding: 12px; margin-bottom: 10px; background: #fff; }
+  .reg-topo { display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; cursor: pointer; }
+  .reg-nome { font-weight: 600; font-size: 14px; }
+  .reg-meta { font-size: 12px; color: var(--cinza); margin-top: 2px; }
+  .badge { display: inline-block; font-size: 11px; padding: 2px 8px; border-radius: 10px; font-weight: 600; }
+  .badge.enviado { background: #e6f4ea; color: var(--verde); }
+  .badge.pendente { background: #fef7e0; color: #b06000; }
+  .reg-detalhe { display: none; margin-top: 10px; border-top: 1px dashed var(--borda); padding-top: 10px; font-size: 13px; }
+  .reg-detalhe.aberto { display: block; }
+  .reg-detalhe table { width: 100%; border-collapse: collapse; }
+  .reg-detalhe td { padding: 4px 6px; border-bottom: 1px solid #f1f3f4; vertical-align: top; }
+  .reg-detalhe td:first-child { color: var(--cinza); width: 40%; }
+  .reg-acoes { margin-top: 8px; display: flex; gap: 8px; flex-wrap: wrap; }
+  .busca { width: 100%; padding: 10px 12px; border: 1px solid var(--borda); border-radius: 8px; font-size: 14px; margin-bottom: 12px; }
+  .vazio { color: var(--cinza); font-size: 13px; text-align: center; padding: 20px 0; }
+  .rodape { text-align: center; color: var(--cinza); font-size: 12px; padding: 20px; }
+  .resultado-contador { font-size: 12px; color: var(--cinza); margin-bottom: 8px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>📋 Relatório Diário de Testemunho — HJ Team</h1>
+  <p>Preenchimento rápido do Google Form · Registros ficam salvos neste navegador</p>
+</header>
+
+<main>
+  <div class="card" id="card-form">
+    <h2>Novo registro</h2>
+
+    <div class="modo-botoes" id="modo-botoes">
+      <button class="modo-btn" data-modo="novo">🆕 Novo Convidado</button>
+      <button class="modo-btn" data-modo="atualizacao">🔄 Atualização de Convidado</button>
+    </div>
+
+    <div id="campos-comuns"></div>
+    <div id="campos-modo"></div>
+
+    <div class="acoes">
+      <button class="btn btn-primario" id="btn-enviar">Enviar para o Google Form</button>
+      <button class="btn btn-secundario" id="btn-prefill">Abrir no Google pré-preenchido</button>
+      <button class="btn btn-secundario" id="btn-limpar">Limpar</button>
+    </div>
+    <div class="status" id="status"></div>
+  </div>
+
+  <div class="card" id="card-historico">
+    <h2>Registros salvos <span id="qtd-registros" style="color:#9aa0a6"></span></h2>
+    <input class="busca" id="busca" type="text" placeholder="Buscar por nome, equipe, país...">
+    <div class="resultado-contador" id="resultado-contador"></div>
+    <div id="lista-registros"></div>
+    <div class="acoes" style="margin-top:12px">
+      <button class="btn btn-secundario btn-pequeno" id="btn-csv">⬇ Exportar CSV</button>
+      <button class="btn btn-perigo btn-pequeno" id="btn-apagar-tudo">Apagar todos</button>
+    </div>
+  </div>
+</main>
+
+<div class="rodape">Dados salvos apenas neste navegador (localStorage). Envio direto ao Google Form.</div>
+
+<iframe name="hj-form-frame" id="hj-form-frame" style="display:none" title="frame envio"></iframe>
+<form id="hj-post" method="POST" target="hj-form-frame" style="display:none"></form>
+
+<script>
+const FORM = {"titulo": "Relatório Diário de Testemunho — HJ Team / Reporte Diário de Testimonio", "form_url": "https://docs.google.com/forms/d/e/1FAIpQLSfThswns8MPrAMgNPqhVsBT5qsQ9GC6HbQIKnp7jk1ygbjLtw/viewform", "form_id": "1FAIpQLSfThswns8MPrAMgNPqhVsBT5qsQ9GC6HbQIKnp7jk1ygbjLtw", "perguntas": [{"id_interno": 463770442, "entry_id": 688459959, "titulo": "Nome Pai-Mãe Espiritual/Nombre Padre-Madre Espiritual", "descricao": "", "tipo": "dropdown", "tipo_codigo": 3, "opcoes": [{"label": "Arthur Lagazzi", "valor_id": null}, {"label": "Francisco Claudio Emmanuel", "valor_id": null}, {"label": "Manuel Miro", "valor_id": null}]}, {"id_interno": 1327443209, "entry_id": 937514113, "titulo": "Equipe/Equipo", "descricao": "", "tipo": "dropdown", "tipo_codigo": 3, "opcoes": [{"label": "10 - Teofilo Otoni", "valor_id": null}]}, {"id_interno": 1135573815, "entry_id": 1843409912, "titulo": "O que você deseja registrar? ", "descricao": "", "tipo": "multipla_escolha", "tipo_codigo": 2, "opcoes": [{"label": "🆕 Novo convidado/Nuevo Invitado", "valor_id": 785906157}, {"label": "🔄 Atualização de convidado/Actualización de invitado", "valor_id": 1638906460}]}, {"id_interno": 785906157, "entry_id": null, "titulo": "Novo Convidado/Nuevo Invitado", "descricao": "", "tipo": "secao", "tipo_codigo": 8, "opcoes": []}, {"id_interno": 1626679658, "entry_id": 257749101, "titulo": "Nome Completo/Nombre Completo", "descricao": "Digite o nome completo. Use somente letras maiúsculas e minúsculas. Exemplo: João Pedro Silva.  \nIngrese el nombre completo. Use solamente letras mayúsculas y minúsculas. Ejemplo: Juan Pedro Silva. ", "tipo": "texto_curto", "tipo_codigo": 0, "opcoes": []}, {"id_interno": 1486603235, "entry_id": 1412838518, "titulo": "Idade/Edad", "descricao": "", "tipo": "dropdown", "tipo_codigo": 3, "opcoes": [{"label": "-15", "valor_id": null}, {"label": "15", "valor_id": null}, {"label": "16", "valor_id": null}, {"label": "17", "valor_id": null}, {"label": "18", "valor_id": null}, {"label": "19", "valor_id": null}, {"label": "20", "valor_id": null}, {"label": "21", "valor_id": null}, {"label": "22", "valor_id": null}, {"label": "23", "valor_id": null}, {"label": "24", "valor_id": null}, {"label": "25", "valor_id": null}, {"label": "26", "valor_id": null}, {"label": "27", "valor_id": null}, {"label": "28", "valor_id": null}, {"label": "29", "valor_id": null}, {"label": "30", "valor_id": null}, {"label": "31", "valor_id": null}, {"label": "32", "valor_id": null}, {"label": "33", "valor_id": null}, {"label": "34", "valor_id": null}, {"label": "35", "valor_id": null}, {"label": "35+", "valor_id": null}]}, {"id_interno": 1861877601, "entry_id": 1186011216, "titulo": "País/Nación", "descricao": "", "tipo": "multipla_escolha", "tipo_codigo": 2, "opcoes": [{"label": "Brasil", "valor_id": null}, {"label": "Argentina", "valor_id": null}, {"label": "Uruguai", "valor_id": null}, {"label": "Paraguai", "valor_id": null}, {"label": "Chile", "valor_id": null}, {"label": "Bolívia", "valor_id": null}, {"label": "Peru", "valor_id": null}, {"label": "Venezuela", "valor_id": null}, {"label": "Colômbia", "valor_id": null}, {"label": "Equador", "valor_id": null}, {"label": "Guiana", "valor_id": null}, {"label": "Suriname", "valor_id": null}, {"label": "Costa Rica", "valor_id": null}, {"label": "Panamá", "valor_id": null}, {"label": "Honduras", "valor_id": null}, {"label": "México", "valor_id": null}, {"label": "República Dominicana", "valor_id": null}, {"label": "Cuba", "valor_id": null}, {"label": "Santa Lúcia", "valor_id": null}, {"label": "Granada", "valor_id": null}, {"label": "", "valor_id": null}]}, {"id_interno": 1126590456, "entry_id": 2099495808, "titulo": "Local (cidade-igreja)/Local (Ciudad-Iglesia)  ", "descricao": "", "tipo": "texto_curto", "tipo_codigo": 0, "opcoes": []}, {"id_interno": 738262442, "entry_id": 1111138505, "titulo": "Contato/Contacto", "descricao": "Código do pais + Número local. Ex: +55 11 9998-6352\nCódigo del país + Número local. Ej: +55 11 9998-6352  ", "tipo": "texto_curto", "tipo_codigo": 0, "opcoes": []}, {"id_interno": 157109870, "entry_id": 555312383, "titulo": "Sistema", "descricao": "", "tipo": "dropdown", "tipo_codigo": 3, "opcoes": [{"label": "Sistema 1", "valor_id": null}, {"label": "Sistema 2", "valor_id": null}]}, {"id_interno": 1411620245, "entry_id": 1939793304, "titulo": "Conferência Atual", "descricao": "", "tipo": "dropdown", "tipo_codigo": 3, "opcoes": [{"label": "Primeiro Contato", "valor_id": null}, {"label": "Introdução ao Princípio Divino", "valor_id": null}, {"label": "Princípio da Criação", "valor_id": null}, {"label": "Queda Humana", "valor_id": null}, {"label": "Escatologia e História Humana", "valor_id": null}, {"label": "O Messias: Seu Advento e o Propósito de Sua Segunda Vinda", "valor_id": null}, {"label": "Ressurreição", "valor_id": null}, {"label": "Predestinação", "valor_id": null}, {"label": "Cristologia", "valor_id": null}, {"label": "Princípio da Restauração", "valor_id": null}, {"label": "Fundamento para o Messias", "valor_id": null}, {"label": "Moisés e Jesus na Providência da Restauração", "valor_id": null}, {"label": "Período de Preparação para a Segunda Vinda do Messias", "valor_id": null}, {"label": "Segunda Vinda do Messias", "valor_id": null}, {"label": "Conclusão do Princípio Divino", "valor_id": null}, {"label": "Concluiu o Sistema", "valor_id": null}, {"label": "Assinou a Ficha", "valor_id": null}, {"label": "Convidado para Jardim", "valor_id": null}, {"label": "Inscrito para Jardim", "valor_id": null}, {"label": "Confirmou Participação", "valor_id": null}, {"label": "Participou do Seminário de Jardim", "valor_id": null}]}, {"id_interno": 1306121027, "entry_id": 1967936733, "titulo": "Ficha assinada?/Firmó la ficha?", "descricao": "", "tipo": "multipla_escolha", "tipo_codigo": 2, "opcoes": [{"label": "Sim/Si", "valor_id": null}, {"label": "Não/No", "valor_id": null}]}, {"id_interno": 1514697663, "entry_id": 2036238739, "titulo": "Faça upload aqui da ficha com a foto", "descricao": "Organizar em formato PDF, as duas fichas no mesmo arquivo e a foto de rosto do convidado no local adequado da folha", "tipo": "arquivo", "tipo_codigo": 13, "opcoes": []}, {"id_interno": 1773880961, "entry_id": 280334818, "titulo": "Observações", "descricao": "", "tipo": "paragrafo", "tipo_codigo": 1, "opcoes": []}, {"id_interno": 1638906460, "entry_id": null, "titulo": "Atualização de Convidado/Atualización de Invitado", "descricao": "", "tipo": "secao", "tipo_codigo": 8, "opcoes": []}, {"id_interno": 500083223, "entry_id": 1384483445, "titulo": "Nome do Convidado/Nombre del Invitado", "descricao": "PT: Digite o nome completo. Use somente letras maiúsculas e minúsculas. Exemplo: João Pedro Silva.  \nES: Ingrese el nombre completo. Use solamente letras mayúsculas y minúsculas. Ejemplo: Juan Pedro Silva.  ", "tipo": "texto_curto", "tipo_codigo": 0, "opcoes": []}, {"id_interno": 1947525888, "entry_id": 197643167, "titulo": "Sistema  ", "descricao": "", "tipo": "multipla_escolha", "tipo_codigo": 2, "opcoes": [{"label": "Sistema 1", "valor_id": null}, {"label": "Sistema 2", "valor_id": null}]}, {"id_interno": 1973560473, "entry_id": 852155054, "titulo": "Conteúdo/Contenido", "descricao": "", "tipo": "dropdown", "tipo_codigo": 3, "opcoes": [{"label": "Primeiro Contato", "valor_id": null}, {"label": "Introdução ao Princípio Divino", "valor_id": null}, {"label": "Capítulo 1 - Princípio da Criação", "valor_id": null}, {"label": "Capítulo 2 - Queda Humana", "valor_id": null}, {"label": "Capítulo 3 - Escatologia e História Humana", "valor_id": null}, {"label": "Capítulo 4 - O Messias: Seu Advento e o Propósito de Sua Segunda Vinda", "valor_id": null}, {"label": "Capítulo 5 - Ressurreição", "valor_id": null}, {"label": "Capítulo 6 - Predestinação", "valor_id": null}, {"label": "Capítulo 7 - Cristologia", "valor_id": null}, {"label": "Capítulo 8 - Princípio da Restauração", "valor_id": null}, {"label": "Capítulo 9 - Providência da Restauração", "valor_id": null}, {"label": "Capítulo 10 - Moisés e Jesus na Providência da Restauração", "valor_id": null}, {"label": "Capítulo 11 - Período de Preparação para a Segunda Vinda do Messias", "valor_id": null}, {"label": "Capítulo 12 - Segunda Vinda do Messias", "valor_id": null}, {"label": "Conclusão do Princípio Divino", "valor_id": null}, {"label": "Concluiu o Sistema", "valor_id": null}, {"label": "Assinou a Ficha", "valor_id": null}, {"label": "Convidado para Jardim", "valor_id": null}, {"label": "Inscrito para Jardim", "valor_id": null}, {"label": "Confirmou Participação", "valor_id": null}, {"label": "Passagem comprada", "valor_id": null}, {"label": "Participou do Seminário de Jardim", "valor_id": null}]}, {"id_interno": 2006262290, "entry_id": 96667291, "titulo": "O convidado avançou?/¿El invitado avanzó?", "descricao": "", "tipo": "multipla_escolha", "tipo_codigo": 2, "opcoes": [{"label": "Sim/Si", "valor_id": null}, {"label": "Não/No", "valor_id": null}]}, {"id_interno": 1266447069, "entry_id": 1085341331, "titulo": "Assinou a Ficha de Membro/Firmo la Ficha de Miembro", "descricao": "", "tipo": "multipla_escolha", "tipo_codigo": 2, "opcoes": [{"label": "Sim/Si", "valor_id": null}, {"label": "Não/No", "valor_id": null}]}, {"id_interno": 1970314513, "entry_id": 1117728855, "titulo": "Faça upload aqui da ficha com a foto", "descricao": "Organizar em formato PDF, as duas fichas no mesmo arquivo e a foto de rosto do convidado no local adequado da folha", "tipo": "arquivo", "tipo_codigo": 13, "opcoes": []}, {"id_interno": 1114620920, "entry_id": 163981358, "titulo": "Confirmado para Jardim?", "descricao": "", "tipo": "multipla_escolha", "tipo_codigo": 2, "opcoes": [{"label": "Sim/Si", "valor_id": null}, {"label": "Não/No", "valor_id": null}]}, {"id_interno": 268687136, "entry_id": 93755898, "titulo": "Passagem comprada/Pasaje Comprada", "descricao": "", "tipo": "multipla_escolha", "tipo_codigo": 2, "opcoes": [{"label": "Sim/Si", "valor_id": null}, {"label": "Não/No", "valor_id": null}]}, {"id_interno": 607603157, "entry_id": 2115077738, "titulo": "Próximo encontro/Siguiente cita", "descricao": "", "tipo": "hora", "tipo_codigo": 9, "opcoes": []}, {"id_interno": 2077363085, "entry_id": 904788116, "titulo": "Observações/Observaciones", "descricao": "", "tipo": "paragrafo", "tipo_codigo": 1, "opcoes": []}]};
+const SUBMIT_URL = 'https://docs.google.com/forms/d/e/' + FORM.form_id + '/formResponse';
+const VIEW_URL = 'https://docs.google.com/forms/d/e/' + FORM.form_id + '/viewform';
+
+const STORAGE_KEY = 'hj_registros_v1';
+let modoAtual = null;
+let qsAtuais = [];   // perguntas do modo atual (sem upload)
+let uploads = [];    // perguntas de arquivo do modo atual
+
+// --- monta grupos a partir da estrutura ---
+const comum = [];      // antes da 1a seção (inclui o seletor de modo)
+const novo = [];
+const atualizacao = [];
+let destino = comum;
+for (const p of FORM.perguntas) {
+  if (p.tipo === 'secao') {
+    destino = (p.id_interno === 785906157) ? novo : atualizacao;
+    continue;
+  }
+  destino.push(p);
+}
+const seletor = comum.pop(); // "O que você deseja registrar?"
+
+function tipoTexto(p) {
+  return {
+    dropdown: 'dropdown', multipla_escolha: 'radio', texto_curto: 'texto',
+    paragrafo: 'paragrafo', hora: 'hora', arquivo: 'arquivo'
+  }[p.tipo] || 'texto';
+}
+
+function campoHTML(p) {
+  const t = tipoTexto(p);
+  const id = 'q-' + p.entry_id;
+  const desc = p.descricao ? '<div class="desc">' + p.descricao.replace(/\n/g, '<br>') + '</div>' : '';
+  if (t === 'dropdown') {
+    const opts = ['<option value="">— selecione —</option>']
+      .concat(p.opcoes.filter(o => o.label).map(o => '<option value="' + escAttr(o.label) + '">' + esc(o.label) + '</option>'))
+      .join('');
+    return '<div class="campo"><label for="' + id + '">' + esc(p.titulo) + '</label>' + desc +
+      '<select id="' + id + '">' + opts + '</select></div>';
+  }
+  if (t === 'radio') {
+    const radios = p.opcoes.filter(o => o.label).map(o =>
+      '<label class="radio-item"><input type="radio" name="' + id + '" value="' + escAttr(String(o.valor_id != null ? o.valor_id : o.label)) +
+      '" data-label="' + escAttr(o.label) + '">' + esc(o.label) + '</label>').join('');
+    return '<div class="campo"><label>' + esc(p.titulo) + '</label>' + desc +
+      '<div class="radios">' + radios + '</div></div>';
+  }
+  if (t === 'paragrafo') {
+    return '<div class="campo"><label for="' + id + '">' + esc(p.titulo) + '</label>' + desc +
+      '<textarea id="' + id + '" placeholder="' + esc(p.titulo) + '"></textarea></div>';
+  }
+  if (t === 'hora') {
+    return '<div class="campo"><label for="' + id + '">' + esc(p.titulo) + '</label>' + desc +
+      '<input type="time" id="' + id + '"></div>';
+  }
+  if (t === 'arquivo') {
+    return '<div class="campo aviso-upload"><strong>📎 ' + esc(p.titulo) + '</strong><br>' + desc +
+      '<br>O upload de arquivo é feito direto no Google Forms — use o botão "Abrir no Google pré-preenchido" depois de preencher e anexe o PDF lá.</div>';
+  }
+  return '<div class="campo"><label for="' + id + '">' + esc(p.titulo) + '</label>' + desc +
+    '<input type="text" id="' + id + '" placeholder="' + esc(p.titulo) + '"></div>';
+}
+
+function esc(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
+function escAttr(s) { return esc(s); }
+
+function renderizarModo() {
+  const el = document.getElementById('campos-modo');
+  const comuns = document.getElementById('campos-comuns');
+  comuns.innerHTML = comum.map(campoHTML).join('');
+  if (!modoAtual) {
+    el.innerHTML = '<div class="vazio">Escolha acima: cadastro de novo convidado ou atualização de convidado.</div>';
+    qsAtuais = []; uploads = [];
+    return;
+  }
+  const grupo = modoAtual === 'novo' ? novo : atualizacao;
+  qsAtuais = grupo.filter(p => p.tipo !== 'arquivo');
+  uploads = grupo.filter(p => p.tipo === 'arquivo');
+  const titulo = modoAtual === 'novo' ? '🆕 Novo Convidado' : '🔄 Atualização de Convidado';
+  el.innerHTML = '<div class="secao-titulo">' + titulo + '</div>' + grupo.map(campoHTML).join('');
+}
+
+function valorDaPergunta(p) {
+  const t = tipoTexto(p);
+  const id = 'q-' + p.entry_id;
+  if (t === 'radio') {
+    const r = document.querySelector('input[name="' + id + '"]:checked');
+    if (!r) return null;
+    const label = r.getAttribute('data-label');
+    return { enviar: r.value, label: label };
+  }
+  const el = document.getElementById(id);
+  if (!el) return null;
+  const v = el.value.trim();
+  if (!v) return null;
+  return { enviar: v, label: v };
+}
+
+function coletarDados() {
+  const dados = [];
+  for (const p of comum.concat(qsAtuais)) {
+    const v = valorDaPergunta(p);
+    if (v) dados.push({ p, enviar: v.enviar, label: v.label });
+  }
+  return dados;
+}
+
+function nomeDoRegistro(dados) {
+  const nomeQ = modoAtual === 'novo'
+    ? FORM.perguntas.find(p => p.entry_id === 257749101)
+    : FORM.perguntas.find(p => p.entry_id === 1384483445);
+  const d = dados.find(x => x.p.entry_id === nomeQ.entry_id);
+  return d ? d.label : '(sem nome)';
+}
+
+function enviarFormulario() {
+  const dados = coletarDados();
+  if (modoAtual !== 'novo' && modoAtual !== 'atualizacao') {
+    mostrarStatus('Escolha o tipo de registro (Novo Convidado ou Atualização).', 'erro');
+    return;
+  }
+  if (!dados.length) { mostrarStatus('Preencha pelo menos um campo.', 'erro'); return; }
+  // sempre envia o seletor de modo
+  const modoVal = seletor.opcoes.find(o => o.label.includes(modoAtual === 'novo' ? 'Novo convidado' : 'Atualização de convidado'));
+  const form = document.getElementById('hj-post');
+  form.action = SUBMIT_URL;
+  form.innerHTML = '';
+  if (modoVal) {
+    const inp = document.createElement('input');
+    inp.name = 'entry.' + seletor.entry_id;
+    inp.value = String(modoVal.valor_id != null ? modoVal.valor_id : modoVal.label);
+    form.appendChild(inp);
+  }
+  for (const d of dados) {
+    const inp = document.createElement('input');
+    inp.name = 'entry.' + d.p.entry_id;
+    inp.value = d.enviar;
+    form.appendChild(inp);
+  }
+  form.submit();
+
+  const reg = {
+    id: Date.now(), ts: new Date().toISOString(), modo: modoAtual,
+    nome: nomeDoRegistro(dados),
+    dados: dados.map(d => ({ pergunta: d.p.titulo, valor: d.label })),
+    uploadsPendentes: uploads.length,
+    status: uploads.length ? 'pendente' : 'enviado'
+  };
+  salvarRegistro(reg);
+  mostrarStatus(
+    (reg.status === 'pendente' ? 'Enviado ao Google (sem os arquivos).' : 'Enviado ao Google Form com sucesso!') +
+    (reg.uploadsPendentes ? ' Anexe o PDF pelo botão "Abrir no Google pré-preenchido".' : ''),
+    reg.status === 'pendente' ? 'info' : 'ok'
+  );
+}
+
+function prefillGoogle() {
+  const dados = coletarDados();
+  const params = new URLSearchParams();
+  const modoVal = seletor.opcoes.find(o => o.label.includes(modoAtual === 'novo' ? 'Novo convidado' : 'Atualização de convidado'));
+  if (modoVal) params.set('entry.' + seletor.entry_id, String(modoVal.valor_id != null ? modoVal.valor_id : modoVal.label));
+  for (const d of dados) params.set('entry.' + d.p.entry_id, d.enviar);
+  window.open(VIEW_URL + (params.toString() ? '?' + params.toString() : ''), '_blank');
+}
+
+function mostrarStatus(msg, tipo) {
+  const el = document.getElementById('status');
+  el.className = 'status ' + tipo;
+  el.textContent = msg;
+  clearTimeout(mostrarStatus._t);
+  mostrarStatus._t = setTimeout(() => { el.className = 'status'; }, 8000);
+}
+
+function limparCampos() {
+  document.querySelectorAll('#campos-comuns input, #campos-comuns select, #campos-comuns textarea,' +
+    '#campos-modo input, #campos-modo select, #campos-modo textarea').forEach(el => {
+    if (el.type === 'radio') el.checked = false; else el.value = '';
+  });
+}
+
+// ---------- histórico ----------
+function getRegistros() {
+  try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; } catch { return []; }
+}
+function salvarRegistro(reg) {
+  const lista = getRegistros();
+  lista.unshift(reg);
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(lista));
+  renderizarHistorico();
+}
+
+function renderizarHistorico(filtro) {
+  const lista = getRegistros();
+  const cont = document.getElementById('resultado-contador');
+  document.getElementById('qtd-registros').textContent = lista.length ? '(' + lista.length + ')' : '';
+  if (!lista.length) {
+    document.getElementById('lista-registros').innerHTML = '<div class="vazio">Nenhum registro ainda.</div>';
+    cont.textContent = '';
+    return;
+  }
+  let items = lista;
+  if (filtro) {
+    const f = filtro.toLowerCase();
+    items = items.filter(r => (r.nome + ' ' + r.modo + ' ' + r.dados.map(d => d.pergunta + ' ' + d.valor).join(' ')).toLowerCase().includes(f));
+  }
+  cont.textContent = items.length + (items.length === 1 ? ' registro' : ' registros') + (filtro ? ' (filtrado)' : '');
+  document.getElementById('lista-registros').innerHTML = items.map(r => {
+    const detalhe = r.dados.map(d => '<tr><td>' + esc(d.pergunta) + '</td><td>' + esc(d.valor) + '</td></tr>').join('');
+    return '<div class="reg">' +
+      '<div class="reg-topo" data-toggle="1">' +
+        '<div><div class="reg-nome">' + esc(r.nome) + '</div>' +
+        '<div class="reg-meta">' + esc(r.modo === 'novo' ? '🆕 Novo Convidado' : '🔄 Atualização') + ' · ' + new Date(r.ts).toLocaleString('pt-BR') + '</div></div>' +
+        '<span class="badge ' + (r.status === 'enviado' ? 'enviado' : 'pendente') + '">' + (r.status === 'enviado' ? '✓ enviado' : '⚠ upload pendente') + '</span>' +
+      '</div>' +
+      '<div class="reg-detalhe"><table>' + detalhe + '</table>' +
+        '<div class="reg-acoes">' +
+          '<button class="btn btn-secundario btn-pequeno" data-recarregar="' + r.id + '">Carregar no formulário</button>' +
+          '<button class="btn btn-perigo btn-pequeno" data-excluir="' + r.id + '">Excluir</button>' +
+        '</div></div>' +
+    '</div>';
+  }).join('');
+}
+
+document.getElementById('lista-registros').addEventListener('click', (ev) => {
+  const topo = ev.target.closest('[data-toggle]');
+  if (topo) {
+    topo.parentElement.querySelector('.reg-detalhe').classList.toggle('aberto');
+    return;
+  }
+  const btnExcluir = ev.target.closest('[data-excluir]');
+  const btnRecarregar = ev.target.closest('[data-recarregar]');
+  if (btnExcluir) {
+    const id = Number(btnExcluir.dataset.excluir);
+    if (confirm('Excluir este registro?')) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(getRegistros().filter(r => r.id !== id)));
+      renderizarHistorico(document.getElementById('busca').value);
+    }
+  }
+  if (btnRecarregar) {
+    const id = Number(btnRecarregar.dataset.recarregar);
+    const reg = getRegistros().find(r => r.id === id);
+    if (reg) carregarRegistro(reg);
+  }
+});
+
+function carregarRegistro(reg) {
+  setModo(reg.modo);
+  // aplica por label/valor
+  for (const d of reg.dados) {
+    const p = FORM.perguntas.find(x => x.titulo === d.pergunta);
+    if (!p) continue;
+    const t = tipoTexto(p);
+    const id = 'q-' + p.entry_id;
+    if (t === 'radio') {
+      const r = document.querySelector('input[name="' + id + '"][data-label="' + escAttr(d.valor) + '"]');
+      if (r) r.checked = true;
+    } else {
+      const el = document.getElementById(id);
+      if (el) el.value = d.valor;
+    }
+  }
+  document.getElementById('card-form').scrollIntoView({ behavior: 'smooth' });
+  mostrarStatus('Registro carregado no formulário. Ajuste e envie.', 'info');
+}
+
+function setModo(m) {
+  modoAtual = m;
+  document.querySelectorAll('.modo-btn').forEach(b => b.classList.toggle('ativo', b.dataset.modo === m));
+  renderizarModo();
+}
+
+// ---------- CSV ----------
+function exportarCSV() {
+  const lista = getRegistros();
+  if (!lista.length) { alert('Nenhum registro para exportar.'); return; }
+  const titulos = ['Data', 'Tipo', 'Nome'];
+  const conjunto = new Set();
+  for (const r of lista) for (const d of r.dados) conjunto.add(d.pergunta);
+  const perguntas = [...conjunto];
+  const linhas = lista.map(r => {
+    const mapa = Object.fromEntries(r.dados.map(d => [d.pergunta, d.valor]));
+    return [new Date(r.ts).toLocaleString('pt-BR'), r.modo === 'novo' ? 'Novo' : 'Atualização', r.nome]
+      .concat(perguntas.map(p => mapa[p] || ''));
+  });
+  const csv = [titulos.concat(perguntas), ...linhas]
+    .map(l => l.map(c => '"' + String(c).replace(/"/g, '""') + '"').join(';'))
+    .join('\n');
+  const blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'registros-hj.csv';
+  a.click();
+}
+
+// ---------- eventos ----------
+document.getElementById('modo-botoes').addEventListener('click', (ev) => {
+  const btn = ev.target.closest('.modo-btn');
+  if (btn) setModo(btn.dataset.modo);
+});
+document.getElementById('btn-enviar').addEventListener('click', enviarFormulario);
+document.getElementById('btn-prefill').addEventListener('click', prefillGoogle);
+document.getElementById('btn-limpar').addEventListener('click', () => { limparCampos(); mostrarStatus('Formulário limpo.', 'info'); });
+document.getElementById('btn-csv').addEventListener('click', exportarCSV);
+document.getElementById('btn-apagar-tudo').addEventListener('click', () => {
+  if (confirm('Apagar TODOS os registros salvos?')) {
+    localStorage.removeItem(STORAGE_KEY);
+    renderizarHistorico();
+  }
+});
+document.getElementById('busca').addEventListener('input', (ev) => renderizarHistorico(ev.target.value));
+
+setModo(null);
+renderizarHistorico();
+</script>
+</body>
+</html>
