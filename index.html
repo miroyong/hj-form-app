@@ -5,78 +5,113 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Relatório HJ — Formulário Rápido</title>
 <style>
-  :root {
-    --azul: #1a73e8; --azul-escuro: #1557b0; --verde: #188038; --cinza: #5f6368;
-    --borda: #dadce0; --fundo: #f8f9fa; --card: #ffffff;
+  :root{
+    --bg:#f4f5fb; --card:#fff; --txt:#101828; --txt2:#667085; --line:#e6e8f0;
+    --acc:#4f46e5; --acc2:#4338ca; --acc-bg:#eef2ff; --ring:rgba(79,70,229,.16);
+    --ok:#067647; --ok-bg:#ecfdf3; --warn:#b54708; --warn-bg:#fffaeb; --err:#b42318; --err-bg:#fef3f2;
+    --shadow:0 1px 2px rgba(16,24,40,.05),0 8px 24px -12px rgba(16,24,40,.12);
+    --r:14px;
   }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: 'Segoe UI', Roboto, Arial, sans-serif; background: var(--fundo); color: #202124; }
-  header { background: var(--azul); color: #fff; padding: 18px 20px; }
-  header h1 { font-size: 20px; font-weight: 600; }
-  header p { font-size: 13px; opacity: .9; margin-top: 4px; }
-  main { max-width: 760px; margin: 20px auto; padding: 0 16px; }
-  .card { background: var(--card); border: 1px solid var(--borda); border-radius: 10px; padding: 20px; margin-bottom: 16px; }
-  .card h2 { font-size: 15px; color: var(--cinza); font-weight: 600; margin-bottom: 12px; text-transform: uppercase; letter-spacing: .5px; }
-  .campo { margin-bottom: 18px; }
-  .campo label { display: block; font-weight: 600; font-size: 14px; margin-bottom: 6px; }
-  .campo .desc { font-size: 12px; color: var(--cinza); margin-bottom: 6px; white-space: pre-line; }
-  .campo input[type=text], .campo input[type=time], .campo select, .campo textarea {
-    width: 100%; padding: 10px 12px; border: 1px solid var(--borda); border-radius: 8px;
-    font-size: 14px; background: #fff; font-family: inherit;
+  @media (prefers-color-scheme:dark){
+    :root{
+      --bg:#0b0d12; --card:#151823; --txt:#e8eaf2; --txt2:#9aa3b5; --line:#262b3a;
+      --acc:#818cf8; --acc2:#a5b0fc; --acc-bg:#1e2235; --ring:rgba(129,140,248,.22);
+      --ok:#4ade80; --ok-bg:#12251b; --warn:#fbbf24; --warn-bg:#2a2010; --err:#f87171; --err-bg:#2a1414;
+      --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px -12px rgba(0,0,0,.6);
+    }
   }
-  .campo textarea { min-height: 70px; resize: vertical; }
-  .campo input:focus, .campo select:focus, .campo textarea:focus { outline: 2px solid var(--azul); outline-offset: -1px; }
-  .radios { display: flex; flex-direction: column; gap: 8px; }
-  .radio-item { display: flex; align-items: center; gap: 10px; padding: 12px; border: 1px solid var(--borda); border-radius: 8px; cursor: pointer; font-size: 14px; }
-  .radio-item:hover { background: #f1f6fe; }
-  .radio-item input { accent-color: var(--azul); width: 18px; height: 18px; }
-  .modo-botoes { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 8px; }
-  .modo-btn { padding: 16px 12px; border: 2px solid var(--borda); border-radius: 10px; background: #fff;
-    font-size: 14px; font-weight: 600; cursor: pointer; text-align: center; transition: all .15s; }
-  .modo-btn.ativo { border-color: var(--azul); background: #e8f0fe; color: var(--azul-escuro); }
-  .modo-btn:hover { border-color: var(--azul); }
-  .secao-titulo { font-size: 16px; font-weight: 700; color: var(--azul-escuro); border-left: 4px solid var(--azul);
-    padding: 6px 12px; background: #e8f0fe; border-radius: 4px; margin: 4px 0 16px; }
-  .aviso-upload { background: #fef7e0; border: 1px solid #f9ab00; border-radius: 8px; padding: 12px; font-size: 13px; }
-  .aviso-upload a { color: var(--azul); }
-  .acoes { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 4px; }
-  .btn { padding: 11px 18px; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; font-family: inherit; }
-  .btn-primario { background: var(--azul); color: #fff; }
-  .btn-primario:hover { background: var(--azul-escuro); }
-  .btn-secundario { background: #fff; color: var(--azul); border: 1px solid var(--borda); }
-  .btn-secundario:hover { border-color: var(--azul); }
-  .btn-perigo { background: #fff; color: #d93025; border: 1px solid var(--borda); }
-  .btn-pequeno { padding: 6px 10px; font-size: 12px; }
-  .status { margin-top: 14px; padding: 12px; border-radius: 8px; font-size: 14px; display: none; }
-  .status.ok { display: block; background: #e6f4ea; color: var(--verde); border: 1px solid #34a853; }
-  .status.erro { display: block; background: #fce8e6; color: #d93025; border: 1px solid #ea4335; }
-  .status.info { display: block; background: #e8f0fe; color: var(--azul-escuro); border: 1px solid var(--azul); }
-  .reg { border: 1px solid var(--borda); border-radius: 8px; padding: 12px; margin-bottom: 10px; background: #fff; }
-  .reg-topo { display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; cursor: pointer; }
-  .reg-nome { font-weight: 600; font-size: 14px; }
-  .reg-meta { font-size: 12px; color: var(--cinza); margin-top: 2px; }
-  .badge { display: inline-block; font-size: 11px; padding: 2px 8px; border-radius: 10px; font-weight: 600; }
-  .badge.enviado { background: #e6f4ea; color: var(--verde); }
-  .badge.pendente { background: #fef7e0; color: #b06000; }
-  .reg-detalhe { display: none; margin-top: 10px; border-top: 1px dashed var(--borda); padding-top: 10px; font-size: 13px; }
-  .reg-detalhe.aberto { display: block; }
-  .reg-detalhe table { width: 100%; border-collapse: collapse; }
-  .reg-detalhe td { padding: 4px 6px; border-bottom: 1px solid #f1f3f4; vertical-align: top; }
-  .reg-detalhe td:first-child { color: var(--cinza); width: 40%; }
-  .reg-acoes { margin-top: 8px; display: flex; gap: 8px; flex-wrap: wrap; }
-  .busca { width: 100%; padding: 10px 12px; border: 1px solid var(--borda); border-radius: 8px; font-size: 14px; margin-bottom: 12px; }
-  .vazio { color: var(--cinza); font-size: 13px; text-align: center; padding: 20px 0; }
-  .rodape { text-align: center; color: var(--cinza); font-size: 12px; padding: 20px; }
-  .resultado-contador { font-size: 12px; color: var(--cinza); margin-bottom: 8px; }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font:15px/1.5 ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+    background:var(--bg);color:var(--txt);min-height:100vh}
+  .wrap{max-width:720px;margin:0 auto;padding:24px 16px 4px}
+  .brand{display:flex;align-items:center;gap:11px}
+  .marca{width:36px;height:36px;border-radius:11px;flex:none;
+    background:linear-gradient(135deg,var(--acc),#7c3aed);color:#fff;font-weight:800;font-size:14px;
+    display:grid;place-items:center;letter-spacing:.5px;box-shadow:var(--shadow)}
+  .brand h1{font-size:17px;font-weight:700;letter-spacing:-.2px}
+  .tagline{color:var(--txt2);font-size:13px;margin:2px 0 22px 47px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:20px;
+    margin-bottom:16px;box-shadow:var(--shadow)}
+  .card h2{font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+    color:var(--txt2);margin-bottom:14px}
+  .campo{margin-bottom:16px}
+  .campo label{display:block;font-weight:600;font-size:13.5px;margin-bottom:6px}
+  .campo .desc{font-size:12.5px;color:var(--txt2);margin-bottom:6px;white-space:pre-line}
+  .campo input[type=text],.campo input[type=time],.campo select,.campo textarea{
+    width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:10px;font-size:14px;
+    background:var(--card);color:var(--txt);font-family:inherit;transition:border-color .15s,box-shadow .15s}
+  .campo select{appearance:none;-webkit-appearance:none;padding-right:34px;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16'%3E%3Cpath d='M4 6l4 4 4-4' fill='none' stroke='%23667085' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-repeat:no-repeat;background-position:right 12px center}
+  .campo textarea{min-height:70px;resize:vertical}
+  .campo input:focus,.campo select:focus,.campo textarea:focus{outline:none;border-color:var(--acc);box-shadow:0 0 0 3px var(--ring)}
+  .radios{display:grid;gap:8px}
+  .radio-item{display:flex;align-items:center;gap:10px;padding:11px 13px;border:1px solid var(--line);
+    border-radius:10px;cursor:pointer;font-size:14px;transition:border-color .15s,background .15s}
+  .radio-item:hover{border-color:var(--acc);background:var(--acc-bg)}
+  .radio-item input{accent-color:var(--acc);width:17px;height:17px;flex:none}
+  .modo-botoes{display:grid;grid-template-columns:1fr 1fr;gap:4px;background:var(--bg);
+    border:1px solid var(--line);border-radius:12px;padding:4px;margin-bottom:18px}
+  .modo-btn{border:0;background:transparent;padding:11px 8px;border-radius:9px;font:600 14px inherit;
+    color:var(--txt2);cursor:pointer;transition:.15s}
+  .modo-btn.ativo{background:var(--card);color:var(--acc);box-shadow:var(--shadow)}
+  .modo-btn:hover{color:var(--acc)}
+  .secao-titulo{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:700;
+    color:var(--acc);background:var(--acc-bg);border:1px solid var(--line);padding:6px 13px;
+    border-radius:999px;margin:2px 0 16px}
+  .aviso-upload{background:var(--warn-bg);border:1px solid var(--line);border-left:3px solid var(--warn);
+    border-radius:10px;padding:12px 13px;font-size:13px}
+  .acoes{display:flex;gap:10px;flex-wrap:wrap;margin-top:4px}
+  .btn{padding:11px 18px;border-radius:10px;font:600 14px inherit;cursor:pointer;
+    border:1px solid transparent;transition:.15s}
+  .btn-primario{background:var(--acc);color:#fff;box-shadow:0 1px 2px rgba(79,70,229,.35)}
+  .btn-primario:hover{background:var(--acc2)}
+  .btn-secundario{background:transparent;color:var(--txt);border-color:var(--line)}
+  .btn-secundario:hover{border-color:var(--acc);color:var(--acc)}
+  .btn-perigo{background:transparent;color:var(--err);border-color:var(--line)}
+  .btn-perigo:hover{border-color:var(--err)}
+  .btn-pequeno{padding:7px 12px;font-size:12.5px;border-radius:8px}
+  .status{margin-top:14px;padding:12px 14px;border-radius:10px;font-size:13.5px;font-weight:500;display:none}
+  .status.ok,.status.erro,.status.info{display:flex;align-items:center;gap:9px}
+  .status::before{content:"";width:8px;height:8px;border-radius:50%;background:currentColor;flex:none}
+  .status.ok{background:var(--ok-bg);color:var(--ok);border:1px solid var(--line)}
+  .status.erro{background:var(--err-bg);color:var(--err);border:1px solid var(--line)}
+  .status.info{background:var(--acc-bg);color:var(--acc);border:1px solid var(--line)}
+  .reg{border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin-bottom:10px;
+    background:var(--card);transition:border-color .15s}
+  .reg:hover{border-color:var(--acc)}
+  .reg-topo{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;cursor:pointer}
+  .reg-topo::after{content:"";width:16px;height:16px;flex:none;opacity:.45;transition:transform .2s;
+    background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16'%3E%3Cpath d='M4 6l4 4 4-4' fill='none' stroke='%23667085' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")}
+  .reg:has(.reg-detalhe.aberto) .reg-topo::after{transform:rotate(180deg)}
+  .reg-nome{font-weight:600;font-size:14px}
+  .reg-meta{font-size:12px;color:var(--txt2);margin-top:2px}
+  .badge{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:700;padding:3px 9px;border-radius:999px}
+  .badge.enviado{background:var(--ok-bg);color:var(--ok)}
+  .badge.pendente{background:var(--warn-bg);color:var(--warn)}
+  .reg-detalhe{display:none;margin-top:10px;border-top:1px dashed var(--line);padding-top:10px;font-size:13px}
+  .reg-detalhe.aberto{display:block}
+  .reg-detalhe table{width:100%;border-collapse:collapse}
+  .reg-detalhe td{padding:5px 6px;border-bottom:1px solid var(--line);vertical-align:top}
+  .reg-detalhe td:first-child{color:var(--txt2);width:40%}
+  .reg-acoes{margin-top:10px;display:flex;gap:8px;flex-wrap:wrap}
+  .busca{width:100%;padding:10px 14px;border:1px solid var(--line);border-radius:10px;font-size:14px;
+    background:var(--card);color:var(--txt);margin-bottom:10px}
+  .busca:focus{outline:none;border-color:var(--acc);box-shadow:0 0 0 3px var(--ring)}
+  .resultado-contador{font-size:12px;color:var(--txt2);margin-bottom:8px}
+  .vazio{color:var(--txt2);font-size:13px;text-align:center;padding:22px 0}
+  .rodape{text-align:center;color:var(--txt2);font-size:12px;padding:18px 16px 26px}
+  .rodape a{color:var(--acc);text-decoration:none}
+  @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 </head>
 <body>
-<header>
-  <h1>📋 Relatório Diário de Testemunho — HJ Team</h1>
-  <p>Preenchimento rápido do Google Form · Registros ficam salvos neste navegador</p>
+<header class="wrap">
+  <div class="brand"><span class="marca">HJ</span><h1>Relatório Diário de Testemunho</h1></div>
+  <p class="tagline">Preenchimento rápido do Google Form · registros salvos neste navegador</p>
 </header>
 
-<main>
+<main class="wrap">
   <div class="card" id="card-form">
     <h2>Novo registro</h2>
 
@@ -90,14 +125,14 @@
 
     <div class="acoes">
       <button class="btn btn-primario" id="btn-enviar">Enviar para o Google Form</button>
-      <button class="btn btn-secundario" id="btn-prefill">Abrir no Google pré-preenchido</button>
+      <button class="btn btn-secundario" id="btn-prefill">Abrir no Google</button>
       <button class="btn btn-secundario" id="btn-limpar">Limpar</button>
     </div>
     <div class="status" id="status"></div>
   </div>
 
   <div class="card" id="card-historico">
-    <h2>Registros salvos <span id="qtd-registros" style="color:#9aa0a6"></span></h2>
+    <h2>Registros salvos <span id="qtd-registros"></span></h2>
     <input class="busca" id="busca" type="text" placeholder="Buscar por nome, equipe, país...">
     <div class="resultado-contador" id="resultado-contador"></div>
     <div id="lista-registros"></div>
@@ -108,7 +143,7 @@
   </div>
 </main>
 
-<div class="rodape">Dados salvos apenas neste navegador (localStorage). Envio direto ao Google Form.</div>
+<footer class="rodape">Dados salvos apenas neste navegador (localStorage) · <a href="https://github.com/miroyong/hj-form-app">hj-form-app</a></footer>
 
 <iframe name="hj-form-frame" id="hj-form-frame" style="display:none" title="frame envio"></iframe>
 <form id="hj-post" method="POST" target="hj-form-frame" style="display:none"></form>
