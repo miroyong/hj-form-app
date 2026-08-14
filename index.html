@@ -6,29 +6,38 @@
 <title>Relatório HJ — Formulário Rápido</title>
 <style>
   :root{
-    --bg:#f4f5fb; --card:#fff; --txt:#101828; --txt2:#667085; --line:#e6e8f0;
-    --acc:#4f46e5; --acc2:#4338ca; --acc-bg:#eef2ff; --ring:rgba(79,70,229,.16);
-    --ok:#067647; --ok-bg:#ecfdf3; --warn:#b54708; --warn-bg:#fffaeb; --err:#b42318; --err-bg:#fef3f2;
-    --shadow:0 1px 2px rgba(16,24,40,.05),0 8px 24px -12px rgba(16,24,40,.12);
-    --r:14px;
+    --bg:light-dark(#f4f5fb,#0b0d12); --card:light-dark(#fff,#151823);
+    --txt:light-dark(#101828,#e8eaf2); --txt2:light-dark(#667085,#9aa3b5); --line:light-dark(#e6e8f0,#262b3a);
+    --acc:light-dark(#4f46e5,#818cf8); --acc2:light-dark(#4338ca,#a5b0fc); --acc-bg:light-dark(#eef2ff,#1e2235);
+    --ring:light-dark(rgba(79,70,229,.16),rgba(129,140,248,.22));
+    --ok:light-dark(#067647,#4ade80); --ok-bg:light-dark(#ecfdf3,#12251b);
+    --warn:light-dark(#b54708,#fbbf24); --warn-bg:light-dark(#fffaeb,#2a2010);
+    --err:light-dark(#b42318,#f87171); --err-bg:light-dark(#fef3f2,#2a1414);
+    --sc:0 1px 2px rgba(16,24,40,.05),0 8px 24px -12px rgba(16,24,40,.12);
+    --se:0 1px 2px rgba(0,0,0,.4),0 8px 24px -12px rgba(0,0,0,.6);
+    --shadow:light-dark(var(--sc),var(--se));
+    --r:14px; color-scheme:light dark;
   }
-  @media (prefers-color-scheme:dark){
-    :root{
-      --bg:#0b0d12; --card:#151823; --txt:#e8eaf2; --txt2:#9aa3b5; --line:#262b3a;
-      --acc:#818cf8; --acc2:#a5b0fc; --acc-bg:#1e2235; --ring:rgba(129,140,248,.22);
-      --ok:#4ade80; --ok-bg:#12251b; --warn:#fbbf24; --warn-bg:#2a2010; --err:#f87171; --err-bg:#2a1414;
-      --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px -12px rgba(0,0,0,.6);
-    }
+  @supports not (color:light-dark(#000,#fff)){
+    :root{ --bg:#f4f5fb; --card:#fff; --txt:#101828; --txt2:#667085; --line:#e6e8f0;
+      --acc:#4f46e5; --acc2:#4338ca; --acc-bg:#eef2ff; --ring:rgba(79,70,229,.16);
+      --ok:#067647; --ok-bg:#ecfdf3; --warn:#b54708; --warn-bg:#fffaeb; --err:#b42318; --err-bg:#fef3f2;
+      --shadow:0 1px 2px rgba(16,24,40,.05),0 8px 24px -12px rgba(16,24,40,.12); }
   }
   *{box-sizing:border-box;margin:0;padding:0}
   body{font:15px/1.5 ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
     background:var(--bg);color:var(--txt);min-height:100vh}
   .wrap{max-width:720px;margin:0 auto;padding:24px 16px 4px}
-  .brand{display:flex;align-items:center;gap:11px}
+  .topo{display:flex;justify-content:space-between;align-items:center;gap:10px}
+  .brand{display:flex;align-items:center;gap:11px;min-width:0}
   .marca{width:36px;height:36px;border-radius:11px;flex:none;
     background:linear-gradient(135deg,var(--acc),#7c3aed);color:#fff;font-weight:800;font-size:14px;
     display:grid;place-items:center;letter-spacing:.5px;box-shadow:var(--shadow)}
-  .brand h1{font-size:17px;font-weight:700;letter-spacing:-.2px}
+  .brand h1{font-size:16px;font-weight:700;letter-spacing:-.2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .controles{display:flex;gap:8px;flex:none}
+  .btn-icona{border:1px solid var(--line);background:var(--card);color:var(--txt);border-radius:9px;
+    padding:8px 12px;font:600 13px inherit;cursor:pointer;transition:.15s;min-width:40px}
+  .btn-icona:hover{border-color:var(--acc);color:var(--acc)}
   .tagline{color:var(--txt2);font-size:13px;margin:2px 0 22px 47px}
   .card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:20px;
     margin-bottom:16px;box-shadow:var(--shadow)}
@@ -107,17 +116,23 @@
 </head>
 <body>
 <header class="wrap">
-  <div class="brand"><span class="marca">HJ</span><h1>Relatório Diário de Testemunho</h1></div>
-  <p class="tagline">Preenchimento rápido do Google Form · registros salvos neste navegador</p>
+  <div class="topo">
+    <div class="brand"><span class="marca">HJ</span><h1 id="titulo-app">Relatório Diário de Testemunho</h1></div>
+    <div class="controles">
+      <button class="btn-icona" id="btn-idioma" title="Mudar idioma">ES</button>
+      <button class="btn-icona" id="btn-tema" title="Alternar tema">&#127769;</button>
+    </div>
+  </div>
+  <p class="tagline" id="tagline">Preenchimento rápido do Google Form &middot; registros salvos neste navegador</p>
 </header>
 
 <main class="wrap">
   <div class="card" id="card-form">
-    <h2>Novo registro</h2>
+    <h2 id="h2-form">Novo registro</h2>
 
     <div class="modo-botoes" id="modo-botoes">
-      <button class="modo-btn" data-modo="novo">🆕 Novo Convidado</button>
-      <button class="modo-btn" data-modo="atualizacao">🔄 Atualização de Convidado</button>
+      <button class="modo-btn" data-modo="novo">Novo Convidado</button>
+      <button class="modo-btn" data-modo="atualizacao">Atualiza&ccedil;&atilde;o de Convidado</button>
     </div>
 
     <div id="campos-comuns"></div>
@@ -132,18 +147,18 @@
   </div>
 
   <div class="card" id="card-historico">
-    <h2>Registros salvos <span id="qtd-registros"></span></h2>
-    <input class="busca" id="busca" type="text" placeholder="Buscar por nome, equipe, país...">
+    <h2><span id="h2-historico-texto">Registros salvos</span> <span id="qtd-registros"></span></h2>
+    <input class="busca" id="busca" type="text" placeholder="Buscar por nome, equipe, pa&iacute;s...">
     <div class="resultado-contador" id="resultado-contador"></div>
     <div id="lista-registros"></div>
     <div class="acoes" style="margin-top:12px">
-      <button class="btn btn-secundario btn-pequeno" id="btn-csv">⬇ Exportar CSV</button>
+      <button class="btn btn-secundario btn-pequeno" id="btn-csv">Exportar CSV</button>
       <button class="btn btn-perigo btn-pequeno" id="btn-apagar-tudo">Apagar todos</button>
     </div>
   </div>
 </main>
 
-<footer class="rodape">Dados salvos apenas neste navegador (localStorage) · <a href="https://github.com/miroyong/hj-form-app">hj-form-app</a></footer>
+<footer class="rodape"><span id="rodape-texto">Dados salvos apenas neste navegador (localStorage)</span> &middot; <a href="https://github.com/miroyong/hj-form-app">hj-form-app</a></footer>
 
 <iframe name="hj-form-frame" id="hj-form-frame" style="display:none" title="frame envio"></iframe>
 <form id="hj-post" method="POST" target="hj-form-frame" style="display:none"></form>
@@ -154,12 +169,162 @@ const SUBMIT_URL = 'https://docs.google.com/forms/d/e/' + FORM.form_id + '/formR
 const VIEW_URL = 'https://docs.google.com/forms/d/e/' + FORM.form_id + '/viewform';
 
 const STORAGE_KEY = 'hj_registros_v1';
+const CHAVE_TEMA = 'hj_tema';
+const CHAVE_IDIOMA = 'hj_idioma';
+
+let idioma = localStorage.getItem(CHAVE_IDIOMA) === 'es' ? 'es' : 'pt';
+let temaManual = localStorage.getItem(CHAVE_TEMA);
+temaManual = (temaManual === 'dark' || temaManual === 'light') ? temaManual : null;
+
+const I18N = {
+  pt: {
+    titulo: 'Relatório Diário de Testemunho',
+    tagline: 'Preenchimento rápido do Google Form · registros salvos neste navegador',
+    novoRegistro: 'Novo registro', registrosSalvos: 'Registros salvos',
+    modoNovo: '🆕 Novo Convidado', modoAtu: '🔄 Atualização de Convidado',
+    secaoNovo: '🆕 Novo Convidado', secaoAtu: '🔄 Atualização de Convidado',
+    selecione: '— selecione —',
+    vazio: 'Escolha acima: cadastro de novo convidado ou atualização de convidado.',
+    enviar: 'Enviar para o Google Form', abrirGoogle: 'Abrir no Google', limpar: 'Limpar',
+    buscar: 'Buscar por nome, equipe, país...', nenhum: 'Nenhum registro ainda.',
+    registro: 'registro', registros: 'registros', filtrado: 'filtrado',
+    enviado: '✓ enviado', pendente: '⚠ upload pendente',
+    carregar: 'Carregar no formulário', excluir: 'Excluir',
+    csv: '⬇ Exportar CSV', apagarTodos: 'Apagar todos', semNome: '(sem nome)',
+    rodape: 'Dados salvos apenas neste navegador (localStorage)',
+    errModo: 'Escolha o tipo de registro (Novo Convidado ou Atualização).',
+    errVazio: 'Preencha pelo menos um campo.',
+    okEnviado: 'Enviado ao Google Form com sucesso!',
+    okSemArquivos: 'Enviado ao Google (sem os arquivos).',
+    anexePdf: ' Anexe o PDF pelo botão "Abrir no Google".',
+    carregado: 'Registro carregado no formulário. Ajuste e envie.',
+    limpo: 'Formulário limpo.',
+    uploadAviso: 'O upload de arquivo é feito direto no Google Forms — use o botão "Abrir no Google" depois de preencher e anexe o PDF lá.',
+    confExcluir: 'Excluir este registro?', confApagar: 'Apagar TODOS os registros salvos?',
+    csvVazio: 'Nenhum registro para exportar.',
+    colData: 'Data', colTipo: 'Tipo', colNome: 'Nome',
+    tipoNovo: 'Novo', tipoAtu: 'Atualização',
+    btnIdioma: 'ES', btnTemaDark: '🌙', btnTemaLight: '☀️',
+    tituloBtnIdioma: 'Mudar idioma', tituloBtnTema: 'Alternar tema'
+  },
+  es: {
+    titulo: 'Reporte Diario de Testimonio',
+    tagline: 'Completado rápido del Formulario de Google · registros guardados en este navegador',
+    novoRegistro: 'Nuevo registro', registrosSalvos: 'Registros guardados',
+    modoNovo: '🆕 Nuevo Invitado', modoAtu: '🔄 Actualización de Invitado',
+    secaoNovo: '🆕 Nuevo Invitado', secaoAtu: '🔄 Actualización de Invitado',
+    selecione: '— seleccione —',
+    vazio: 'Elige arriba: alta de nuevo invitado o actualización de invitado.',
+    enviar: 'Enviar al Formulario de Google', abrirGoogle: 'Abrir en Google', limpar: 'Limpiar',
+    buscar: 'Buscar por nombre, equipo, país...', ninguno: 'Aún no hay registros.',
+    registro: 'registro', registros: 'registros', filtrado: 'filtrado',
+    enviado: '✓ enviado', pendente: '⚠ subida pendiente',
+    carregar: 'Cargar en el formulario', excluir: 'Eliminar',
+    csv: '⬇ Exportar CSV', apagarTodos: 'Borrar todos', semNome: '(sin nombre)',
+    rodape: 'Datos guardados solo en este navegador (localStorage)',
+    errModo: 'Elige el tipo de registro (Nuevo Invitado o Actualización).',
+    errVazio: 'Completa al menos un campo.',
+    okEnviado: '¡Enviado al Formulario de Google con éxito!',
+    okSemArquivos: 'Enviado a Google (sin los archivos).',
+    anexePdf: ' Adjunta el PDF con el botón "Abrir en Google".',
+    carregado: 'Registro cargado en el formulario. Ajusta y envía.',
+    limpo: 'Formulario limpiado.',
+    uploadAviso: 'La subida de archivos se hace directamente en Google Forms — usa el botón "Abrir en Google" después de completar y adjunta el PDF allí.',
+    confExcluir: '¿Eliminar este registro?', confApagar: '¿Borrar TODOS los registros guardados?',
+    csvVazio: 'No hay registros para exportar.',
+    colData: 'Fecha', colTipo: 'Tipo', colNome: 'Nombre',
+    tipoNovo: 'Nuevo', tipoAtu: 'Actualización',
+    btnIdioma: 'PT', btnTemaDark: '🌙', btnTemaLight: '☀️',
+    tituloBtnIdioma: 'Cambiar idioma', tituloBtnTema: 'Cambiar tema'
+  }
+};
+function t(k) { return (I18N[idioma] && I18N[idioma][k] !== undefined) ? I18N[idioma][k] : (I18N.pt[k] !== undefined ? I18N.pt[k] : k); }
+
+function segmentoIdioma(s) {
+  if (!s) return s;
+  s = String(s).trim();
+  if (!s.includes('/')) return s;
+  const partes = s.split('/').map(x => x.trim()).filter(Boolean);
+  if (partes.length < 2) return s;
+  return idioma === 'es' ? partes[partes.length - 1] : partes[0];
+}
+
+function traduzirDesc(s) {
+  if (!s) return '';
+  const partes = s.split('\n').map(x => x.trim()).filter(Boolean);
+  if (partes.length < 2) return s;
+  return idioma === 'es' ? partes[partes.length - 1] : partes[0];
+}
+
+function temaEfetivo() {
+  if (temaManual) return temaManual;
+  return matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+}
+function atualizarBtnTema() {
+  const btn = document.getElementById('btn-tema');
+  if (!btn) return;
+  btn.textContent = temaEfetivo() === 'dark' ? t('btnTemaLight') : t('btnTemaDark');
+  btn.title = t('tituloBtnTema');
+}
+function toggleTema() {
+  temaManual = temaEfetivo() === 'dark' ? 'light' : 'dark';
+  localStorage.setItem(CHAVE_TEMA, temaManual);
+  document.documentElement.style.colorScheme = temaManual;
+  atualizarBtnTema();
+}
+function sincronizarChrome() {
+  document.getElementById('titulo-app').textContent = t('titulo');
+  document.getElementById('tagline').textContent = t('tagline');
+  document.getElementById('h2-form').textContent = t('novoRegistro');
+  document.getElementById('h2-historico-texto').textContent = t('registrosSalvos');
+  document.querySelector('.modo-btn[data-modo=novo]').textContent = t('modoNovo');
+  document.querySelector('.modo-btn[data-modo=atualizacao]').textContent = t('modoAtu');
+  document.getElementById('btn-enviar').textContent = t('enviar');
+  document.getElementById('btn-prefill').textContent = t('abrirGoogle');
+  document.getElementById('btn-limpar').textContent = t('limpar');
+  document.getElementById('busca').placeholder = t('buscar');
+  document.getElementById('btn-csv').textContent = t('csv');
+  document.getElementById('btn-apagar-tudo').textContent = t('apagarTodos');
+  document.getElementById('rodape-texto').textContent = t('rodape');
+  const bi = document.getElementById('btn-idioma');
+  bi.textContent = t('btnIdioma');
+  bi.title = t('tituloBtnIdioma');
+  atualizarBtnTema();
+}
+function valoresAtuais() {
+  const map = {};
+  document.querySelectorAll('#campos-comuns [id^="q-"], #campos-modo [id^="q-"]').forEach(el => {
+    if (el.type === 'radio') { if (el.checked) map[el.name] = { r: el.value }; }
+    else map[el.id] = el.value;
+  });
+  return map;
+}
+function restaurarValores(map) {
+  for (const k in map) {
+    const v = map[k];
+    if (v && typeof v === 'object' && v.r !== undefined) {
+      const r = document.querySelector('input[name="' + k + '"][value="' + v.r + '"]');
+      if (r) r.checked = true;
+    } else {
+      const el = document.getElementById(k);
+      if (el && v !== undefined) el.value = v;
+    }
+  }
+}
+function aplicarIdioma() {
+  sincronizarChrome();
+  const vals = valoresAtuais();
+  renderizarModo();
+  restaurarValores(vals);
+  renderizarHistorico(document.getElementById('busca').value);
+}
+
 let modoAtual = null;
 let qsAtuais = [];   // perguntas do modo atual (sem upload)
 let uploads = [];    // perguntas de arquivo do modo atual
 
 // --- monta grupos a partir da estrutura ---
-const comum = [];      // antes da 1a seção (inclui o seletor de modo)
+const comum = [];
 const novo = [];
 const atualizacao = [];
 let destino = comum;
@@ -180,37 +345,38 @@ function tipoTexto(p) {
 }
 
 function campoHTML(p) {
-  const t = tipoTexto(p);
+  const t2 = tipoTexto(p);
   const id = 'q-' + p.entry_id;
-  const desc = p.descricao ? '<div class="desc">' + p.descricao.replace(/\n/g, '<br>') + '</div>' : '';
-  if (t === 'dropdown') {
-    const opts = ['<option value="">— selecione —</option>']
-      .concat(p.opcoes.filter(o => o.label).map(o => '<option value="' + escAttr(o.label) + '">' + esc(o.label) + '</option>'))
+  const desc = p.descricao ? '<div class="desc">' + esc(traduzirDesc(p.descricao)) + '</div>' : '';
+  if (t2 === 'dropdown') {
+    const opts = ['<option value="">' + esc(t('selecione')) + '</option>']
+      .concat(p.opcoes.filter(o => o.label).map(o =>
+        '<option value="' + escAttr(o.label) + '">' + esc(segmentoIdioma(o.label)) + '</option>'))
       .join('');
-    return '<div class="campo"><label for="' + id + '">' + esc(p.titulo) + '</label>' + desc +
+    return '<div class="campo"><label for="' + id + '">' + esc(segmentoIdioma(p.titulo)) + '</label>' + desc +
       '<select id="' + id + '">' + opts + '</select></div>';
   }
-  if (t === 'radio') {
+  if (t2 === 'radio') {
     const radios = p.opcoes.filter(o => o.label).map(o =>
       '<label class="radio-item"><input type="radio" name="' + id + '" value="' + escAttr(String(o.valor_id != null ? o.valor_id : o.label)) +
-      '" data-label="' + escAttr(o.label) + '">' + esc(o.label) + '</label>').join('');
-    return '<div class="campo"><label>' + esc(p.titulo) + '</label>' + desc +
+      '" data-label="' + escAttr(o.label) + '">' + esc(segmentoIdioma(o.label)) + '</label>').join('');
+    return '<div class="campo"><label>' + esc(segmentoIdioma(p.titulo)) + '</label>' + desc +
       '<div class="radios">' + radios + '</div></div>';
   }
-  if (t === 'paragrafo') {
-    return '<div class="campo"><label for="' + id + '">' + esc(p.titulo) + '</label>' + desc +
-      '<textarea id="' + id + '" placeholder="' + esc(p.titulo) + '"></textarea></div>';
+  if (t2 === 'paragrafo') {
+    return '<div class="campo"><label for="' + id + '">' + esc(segmentoIdioma(p.titulo)) + '</label>' + desc +
+      '<textarea id="' + id + '" placeholder="' + esc(segmentoIdioma(p.titulo)) + '"></textarea></div>';
   }
-  if (t === 'hora') {
-    return '<div class="campo"><label for="' + id + '">' + esc(p.titulo) + '</label>' + desc +
+  if (t2 === 'hora') {
+    return '<div class="campo"><label for="' + id + '">' + esc(segmentoIdioma(p.titulo)) + '</label>' + desc +
       '<input type="time" id="' + id + '"></div>';
   }
-  if (t === 'arquivo') {
-    return '<div class="campo aviso-upload"><strong>📎 ' + esc(p.titulo) + '</strong><br>' + desc +
-      '<br>O upload de arquivo é feito direto no Google Forms — use o botão "Abrir no Google pré-preenchido" depois de preencher e anexe o PDF lá.</div>';
+  if (t2 === 'arquivo') {
+    return '<div class="campo aviso-upload"><strong>' + esc(segmentoIdioma(p.titulo)) + '</strong><br>' +
+      (desc || t('uploadAviso')) + '</div>';
   }
-  return '<div class="campo"><label for="' + id + '">' + esc(p.titulo) + '</label>' + desc +
-    '<input type="text" id="' + id + '" placeholder="' + esc(p.titulo) + '"></div>';
+  return '<div class="campo"><label for="' + id + '">' + esc(segmentoIdioma(p.titulo)) + '</label>' + desc +
+    '<input type="text" id="' + id + '" placeholder="' + esc(segmentoIdioma(p.titulo)) + '"></div>';
 }
 
 function esc(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
@@ -221,38 +387,44 @@ function renderizarModo() {
   const comuns = document.getElementById('campos-comuns');
   comuns.innerHTML = comum.map(campoHTML).join('');
   if (!modoAtual) {
-    el.innerHTML = '<div class="vazio">Escolha acima: cadastro de novo convidado ou atualização de convidado.</div>';
+    el.innerHTML = '<div class="vazio">' + esc(t('vazio')) + '</div>';
     qsAtuais = []; uploads = [];
     return;
   }
   const grupo = modoAtual === 'novo' ? novo : atualizacao;
   qsAtuais = grupo.filter(p => p.tipo !== 'arquivo');
   uploads = grupo.filter(p => p.tipo === 'arquivo');
-  const titulo = modoAtual === 'novo' ? '🆕 Novo Convidado' : '🔄 Atualização de Convidado';
-  el.innerHTML = '<div class="secao-titulo">' + titulo + '</div>' + grupo.map(campoHTML).join('');
+  const titulo = modoAtual === 'novo' ? t('secaoNovo') : t('secaoAtu');
+  el.innerHTML = '<div class="secao-titulo">' + esc(titulo) + '</div>' + grupo.map(campoHTML).join('');
 }
 
 function valorDaPergunta(p) {
-  const t = tipoTexto(p);
+  const t2 = tipoTexto(p);
   const id = 'q-' + p.entry_id;
-  if (t === 'radio') {
+  if (t2 === 'radio') {
     const r = document.querySelector('input[name="' + id + '"]:checked');
     if (!r) return null;
-    const label = r.getAttribute('data-label');
-    return { enviar: r.value, label: label };
+    const original = r.getAttribute('data-label');
+    const display = r.parentElement.textContent.trim();
+    return { enviar: r.value, label: display, original: original };
   }
   const el = document.getElementById(id);
   if (!el) return null;
   const v = el.value.trim();
   if (!v) return null;
-  return { enviar: v, label: v };
+  if (t2 === 'dropdown') {
+    const opt = el.selectedOptions && el.selectedOptions[0];
+    const original = opt && opt.value;
+    return { enviar: v, label: opt ? opt.textContent.trim() : v, original: original };
+  }
+  return { enviar: v, label: v, original: v };
 }
 
 function coletarDados() {
   const dados = [];
   for (const p of comum.concat(qsAtuais)) {
     const v = valorDaPergunta(p);
-    if (v) dados.push({ p, enviar: v.enviar, label: v.label });
+    if (v) dados.push({ p: p, enviar: v.enviar, label: v.label, original: v.original });
   }
   return dados;
 }
@@ -262,17 +434,16 @@ function nomeDoRegistro(dados) {
     ? FORM.perguntas.find(p => p.entry_id === 257749101)
     : FORM.perguntas.find(p => p.entry_id === 1384483445);
   const d = dados.find(x => x.p.entry_id === nomeQ.entry_id);
-  return d ? d.label : '(sem nome)';
+  return d ? d.label : t('semNome');
 }
 
 function enviarFormulario() {
   const dados = coletarDados();
   if (modoAtual !== 'novo' && modoAtual !== 'atualizacao') {
-    mostrarStatus('Escolha o tipo de registro (Novo Convidado ou Atualização).', 'erro');
+    mostrarStatus(t('errModo'), 'erro');
     return;
   }
-  if (!dados.length) { mostrarStatus('Preencha pelo menos um campo.', 'erro'); return; }
-  // sempre envia o seletor de modo
+  if (!dados.length) { mostrarStatus(t('errVazio'), 'erro'); return; }
   const modoVal = seletor.opcoes.find(o => o.label.includes(modoAtual === 'novo' ? 'Novo convidado' : 'Atualização de convidado'));
   const form = document.getElementById('hj-post');
   form.action = SUBMIT_URL;
@@ -294,14 +465,14 @@ function enviarFormulario() {
   const reg = {
     id: Date.now(), ts: new Date().toISOString(), modo: modoAtual,
     nome: nomeDoRegistro(dados),
-    dados: dados.map(d => ({ pergunta: d.p.titulo, valor: d.label })),
+    dados: dados.map(d => ({ pergunta: d.p.titulo, valor: d.label, original: d.original })),
     uploadsPendentes: uploads.length,
     status: uploads.length ? 'pendente' : 'enviado'
   };
   salvarRegistro(reg);
   mostrarStatus(
-    (reg.status === 'pendente' ? 'Enviado ao Google (sem os arquivos).' : 'Enviado ao Google Form com sucesso!') +
-    (reg.uploadsPendentes ? ' Anexe o PDF pelo botão "Abrir no Google pré-preenchido".' : ''),
+    (reg.status === 'pendente' ? t('okSemArquivos') : t('okEnviado')) +
+    (reg.uploadsPendentes ? t('anexePdf') : ''),
     reg.status === 'pendente' ? 'info' : 'ok'
   );
 }
@@ -346,7 +517,7 @@ function renderizarHistorico(filtro) {
   const cont = document.getElementById('resultado-contador');
   document.getElementById('qtd-registros').textContent = lista.length ? '(' + lista.length + ')' : '';
   if (!lista.length) {
-    document.getElementById('lista-registros').innerHTML = '<div class="vazio">Nenhum registro ainda.</div>';
+    document.getElementById('lista-registros').innerHTML = '<div class="vazio">' + esc(t('nenhum')) + '</div>';
     cont.textContent = '';
     return;
   }
@@ -355,19 +526,21 @@ function renderizarHistorico(filtro) {
     const f = filtro.toLowerCase();
     items = items.filter(r => (r.nome + ' ' + r.modo + ' ' + r.dados.map(d => d.pergunta + ' ' + d.valor).join(' ')).toLowerCase().includes(f));
   }
-  cont.textContent = items.length + (items.length === 1 ? ' registro' : ' registros') + (filtro ? ' (filtrado)' : '');
+  cont.textContent = items.length + ' ' + (items.length === 1 ? t('registro') : t('registros')) + (filtro ? ' (' + t('filtrado') + ')' : '');
   document.getElementById('lista-registros').innerHTML = items.map(r => {
-    const detalhe = r.dados.map(d => '<tr><td>' + esc(d.pergunta) + '</td><td>' + esc(d.valor) + '</td></tr>').join('');
+    const detalhe = r.dados.map(d =>
+      '<tr><td>' + esc(segmentoIdioma(d.pergunta)) + '</td><td>' + esc(segmentoIdioma(d.valor)) + '</td></tr>').join('');
+    const modoTxt = r.modo === 'novo' ? t('secaoNovo') : t('secaoAtu');
     return '<div class="reg">' +
       '<div class="reg-topo" data-toggle="1">' +
         '<div><div class="reg-nome">' + esc(r.nome) + '</div>' +
-        '<div class="reg-meta">' + esc(r.modo === 'novo' ? '🆕 Novo Convidado' : '🔄 Atualização') + ' · ' + new Date(r.ts).toLocaleString('pt-BR') + '</div></div>' +
-        '<span class="badge ' + (r.status === 'enviado' ? 'enviado' : 'pendente') + '">' + (r.status === 'enviado' ? '✓ enviado' : '⚠ upload pendente') + '</span>' +
+        '<div class="reg-meta">' + esc(modoTxt) + ' · ' + new Date(r.ts).toLocaleString(idioma === 'es' ? 'es' : 'pt-BR') + '</div></div>' +
+        '<span class="badge ' + (r.status === 'enviado' ? 'enviado' : 'pendente') + '">' + (r.status === 'enviado' ? t('enviado') : t('pendente')) + '</span>' +
       '</div>' +
       '<div class="reg-detalhe"><table>' + detalhe + '</table>' +
         '<div class="reg-acoes">' +
-          '<button class="btn btn-secundario btn-pequeno" data-recarregar="' + r.id + '">Carregar no formulário</button>' +
-          '<button class="btn btn-perigo btn-pequeno" data-excluir="' + r.id + '">Excluir</button>' +
+          '<button class="btn btn-secundario btn-pequeno" data-recarregar="' + r.id + '">' + esc(t('carregar')) + '</button>' +
+          '<button class="btn btn-perigo btn-pequeno" data-excluir="' + r.id + '">' + esc(t('excluir')) + '</button>' +
         '</div></div>' +
     '</div>';
   }).join('');
@@ -383,7 +556,7 @@ document.getElementById('lista-registros').addEventListener('click', (ev) => {
   const btnRecarregar = ev.target.closest('[data-recarregar]');
   if (btnExcluir) {
     const id = Number(btnExcluir.dataset.excluir);
-    if (confirm('Excluir este registro?')) {
+    if (confirm(t('confExcluir'))) {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(getRegistros().filter(r => r.id !== id)));
       renderizarHistorico(document.getElementById('busca').value);
     }
@@ -397,22 +570,22 @@ document.getElementById('lista-registros').addEventListener('click', (ev) => {
 
 function carregarRegistro(reg) {
   setModo(reg.modo);
-  // aplica por label/valor
   for (const d of reg.dados) {
     const p = FORM.perguntas.find(x => x.titulo === d.pergunta);
     if (!p) continue;
-    const t = tipoTexto(p);
+    const t2 = tipoTexto(p);
     const id = 'q-' + p.entry_id;
-    if (t === 'radio') {
-      const r = document.querySelector('input[name="' + id + '"][data-label="' + escAttr(d.valor) + '"]');
+    const val = d.original || d.valor;
+    if (t2 === 'radio') {
+      const r = document.querySelector('input[name="' + id + '"][data-label="' + escAttr(val) + '"]');
       if (r) r.checked = true;
     } else {
       const el = document.getElementById(id);
-      if (el) el.value = d.valor;
+      if (el) el.value = val;
     }
   }
   document.getElementById('card-form').scrollIntoView({ behavior: 'smooth' });
-  mostrarStatus('Registro carregado no formulário. Ajuste e envie.', 'info');
+  mostrarStatus(t('carregado'), 'info');
 }
 
 function setModo(m) {
@@ -424,14 +597,14 @@ function setModo(m) {
 // ---------- CSV ----------
 function exportarCSV() {
   const lista = getRegistros();
-  if (!lista.length) { alert('Nenhum registro para exportar.'); return; }
-  const titulos = ['Data', 'Tipo', 'Nome'];
+  if (!lista.length) { alert(t('csvVazio')); return; }
+  const titulos = [t('colData'), t('colTipo'), t('colNome')];
   const conjunto = new Set();
   for (const r of lista) for (const d of r.dados) conjunto.add(d.pergunta);
   const perguntas = [...conjunto];
   const linhas = lista.map(r => {
     const mapa = Object.fromEntries(r.dados.map(d => [d.pergunta, d.valor]));
-    return [new Date(r.ts).toLocaleString('pt-BR'), r.modo === 'novo' ? 'Novo' : 'Atualização', r.nome]
+    return [new Date(r.ts).toLocaleString(idioma === 'es' ? 'es' : 'pt-BR'), r.modo === 'novo' ? t('tipoNovo') : t('tipoAtu'), r.nome]
       .concat(perguntas.map(p => mapa[p] || ''));
   });
   const csv = [titulos.concat(perguntas), ...linhas]
@@ -451,16 +624,25 @@ document.getElementById('modo-botoes').addEventListener('click', (ev) => {
 });
 document.getElementById('btn-enviar').addEventListener('click', enviarFormulario);
 document.getElementById('btn-prefill').addEventListener('click', prefillGoogle);
-document.getElementById('btn-limpar').addEventListener('click', () => { limparCampos(); mostrarStatus('Formulário limpo.', 'info'); });
+document.getElementById('btn-limpar').addEventListener('click', () => { limparCampos(); mostrarStatus(t('limpo'), 'info'); });
 document.getElementById('btn-csv').addEventListener('click', exportarCSV);
 document.getElementById('btn-apagar-tudo').addEventListener('click', () => {
-  if (confirm('Apagar TODOS os registros salvos?')) {
+  if (confirm(t('confApagar'))) {
     localStorage.removeItem(STORAGE_KEY);
     renderizarHistorico();
   }
 });
 document.getElementById('busca').addEventListener('input', (ev) => renderizarHistorico(ev.target.value));
+document.getElementById('btn-tema').addEventListener('click', toggleTema);
+document.getElementById('btn-idioma').addEventListener('click', () => {
+  idioma = idioma === 'pt' ? 'es' : 'pt';
+  localStorage.setItem(CHAVE_IDIOMA, idioma);
+  aplicarIdioma();
+});
 
+// ---------- init ----------
+if (temaManual) document.documentElement.style.colorScheme = temaManual;
+sincronizarChrome();
 setModo(null);
 renderizarHistorico();
 </script>
